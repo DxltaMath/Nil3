@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Assertions.*
 
 internal class MainKtTest {
 
-    @Test fun main () {
+    @Test
+    fun main () {
 
         val app = Javalin.create { config ->
             config.http.defaultContentType = "text/javascript";

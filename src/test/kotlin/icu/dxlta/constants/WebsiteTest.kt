@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Assertions.*
 
 internal class WebsiteTest {
 
-    @Test fun index () {
+    @Test
+    fun index () {
 
         val app = Javalin.create { config ->
             config.http.defaultContentType = "text/html";
@@ -23,7 +24,8 @@ internal class WebsiteTest {
         app.stop();
     }
 
-    @Test fun indexRedirect () {
+    @Test
+    fun indexRedirect () {
 
         val app = Javalin.create { config ->
             config.http.defaultContentType = "text/html";
@@ -42,7 +44,8 @@ internal class WebsiteTest {
         app.stop();
     }
 
-    @Test fun style () {
+    @Test
+    fun style () {
 
         val app = Javalin.create { config ->
             config.http.defaultContentType = "text/css";
