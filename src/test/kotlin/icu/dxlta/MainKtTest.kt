@@ -11,15 +11,17 @@ internal class MainKtTest {
     @Test
     fun main () {
 
+        val patcher : Nil = Nil()
+
         val app = Javalin.create { config ->
             config.http.defaultContentType = "text/javascript";
         }.start(1111)
 
         app.get("/app/main.js") { ctx ->
-            ctx.result(Nil.getPatchedFile())
+            ctx.result(patcher.getPatchedFile())
         }
 
-        assertEquals(Nil.getPatchedFile(), fetch("http://localhost:${app.port()}/app/main.js"))
+        assertEquals(patcher.getPatchedFile(), fetch("http://localhost:${app.port()}/app/main.js"))
 
         app.stop();
     }
