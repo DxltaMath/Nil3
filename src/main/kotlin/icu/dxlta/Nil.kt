@@ -9,16 +9,16 @@ import icu.dxlta.patching.Variables
 import java.util.*
 
 /** The actual DeltaMath script patcher. */
-object Nil {
+class Nil {
 
     /** Latest unmodified main.js */
-    @JvmStatic private var latestVanillaFile : String? = null;
+    private var latestVanillaFile : String? = null;
 
     /** Latest patched main.js */
-    @JvmStatic private var latestPatchedFile : String? = null;
+    private var latestPatchedFile : String? = null;
 
     /** Latest main.js URL */
-    @JvmStatic private var latestMainJsUrl : String? = null;
+    private var latestMainJsUrl : String? = null;
 
 
     /**
@@ -27,7 +27,7 @@ object Nil {
      * @author gemsvidø
      * @return The modified DeltaMath main.js file
      */
-    @JvmStatic fun patchFile (unmodifiedFile : String) : String {
+    fun patchFile (unmodifiedFile : String) : String {
 
         println("[patchFile] Patching main.js...")
 
@@ -90,7 +90,7 @@ object Nil {
      * @author gemsvidø
      * @return The URL to DeltaMath's main.js file
      */
-    @JvmStatic fun getMainJsUrl () : String {
+    fun getMainJsUrl () : String {
         if (latestMainJsUrl === null) {
             println("[getMainJsUrl] Main.js url is not cached. Fetching one...")
             val html : String = fetch("https://www.deltamath.com/app/")
@@ -109,7 +109,7 @@ object Nil {
      * @author gemsvidø
      * @return DeltaMath's non-modified main.js
      */
-    @JvmStatic fun getFile () : String {
+    fun getFile () : String {
         if (latestVanillaFile === null) {
             println("[getFile] Main.js contents is not cached. Fetching it...")
             latestVanillaFile = fetch(getMainJsUrl());
@@ -125,7 +125,7 @@ object Nil {
      * @author gemsvidø
      * @return The latest patched main.js file
      */
-    @JvmStatic fun getPatchedFile () : String {
+    fun getPatchedFile () : String {
         if (latestPatchedFile === null) {
             println("[getPatchedFile] Patched main.js is not cached. Patching now...")
             latestPatchedFile = patchFile(getFile())
@@ -141,21 +141,16 @@ object Nil {
      * Clears the caches every cacheInterval
      * @author gemsvidø
      */
-    @JvmStatic fun startCaching (args: Args) : Unit {
+    fun startCaching () : Unit {
 
-        // Preserve cache
-        if (args.cacheInterval.toInt() == -1) {
-            println("[startCaching] Cache is in preserve mode and will not be reset.")
-            return;
-        } else if (args.cacheInterval < 1000) { // Reset cache every 1 second if no caching
-            println("[startCaching] Cache was set to purge faster than every second. Setting to every second.")
-            args.cacheInterval = 1000
-        }
+        val cacheInterval : Long = 20 * 60 * 1000;
+
+
 
         val latestVanillaCache = Thread {
-            println("[startCaching] Purging vanilla file cache every ${args.cacheInterval} milliseconds")
+            println("[startCaching] Purging vanilla file cache every $cacheInterval milliseconds")
             while (true) {
-                sleep(args.cacheInterval)
+                sleep(cacheInterval)
                 latestVanillaFile = null;
             }
         }
@@ -163,9 +158,9 @@ object Nil {
 
 
         val latestPatchedCache = Thread {
-            println("[startCaching] Purging patched file cache every ${args.cacheInterval} milliseconds")
+            println("[startCaching] Purging patched file cache every $cacheInterval milliseconds")
             while (true) {
-                sleep(args.cacheInterval)
+                sleep(cacheInterval)
                 latestPatchedFile = null;
             }
         }
@@ -173,9 +168,9 @@ object Nil {
 
 
         val latestUrlCache = Thread {
-            println("[startCaching] Purging main.js URL cache every ${args.cacheInterval / 2} milliseconds")
+            println("[startCaching] Purging main.js URL cache every ${cacheInterval / 2} milliseconds")
             while (true) {
-                sleep(args.cacheInterval / 2)
+                sleep(cacheInterval / 2)
                 latestMainJsUrl = null;
             }
         }

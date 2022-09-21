@@ -5,13 +5,15 @@ import icu.dxlta.constants.SSL
 import icu.dxlta.constants.Website
 import io.javalin.Javalin
 import io.javalin.ssl.plugin.SSLPlugin
-import org.slf4j.LoggerFactory
+
+
+val patcher : Nil = Nil()
 
 
 /** entry point */
 fun main (args: Array<String>) {
 
-    Nil.startCaching(Args(args))
+    patcher.startCaching()
     Main.main();
 }
 
@@ -50,7 +52,7 @@ object Main {
         }
         app.get("/app/main*js") { ctx ->
             ctx.contentType("text/javascript");
-            ctx.result(Nil.getPatchedFile())
+            ctx.result(patcher.getPatchedFile())
         }
 
         app.get("/version") { ctx ->
@@ -60,7 +62,7 @@ object Main {
 
         app.get("/mjs") { ctx ->
             ctx.contentType("text/plain");
-            ctx.result(Nil.getMainJsUrl())
+            ctx.result(patcher.getMainJsUrl())
         }
 
 
