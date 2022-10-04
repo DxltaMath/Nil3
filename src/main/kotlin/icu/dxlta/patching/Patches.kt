@@ -1,5 +1,6 @@
 package icu.dxlta.patching
 
+/** Replacements  */
 class Patches (original : String) {
 
     private val content : String;
@@ -11,6 +12,7 @@ class Patches (original : String) {
         content = original;
     }
 
+    /** Replace occurrences of one string with another. */
     fun push (replace: String, set: String) : Unit {
         replacements.put(replace, set)
     }

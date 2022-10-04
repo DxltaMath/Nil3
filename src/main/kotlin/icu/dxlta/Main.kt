@@ -19,6 +19,7 @@ fun main (args: Array<String>) {
 
 object Main {
 
+
     @JvmStatic val app : Javalin = Javalin.create { config ->
 
         if (SSL.USE_HTTPS) config.plugins.register(SSLPlugin { ssl ->
@@ -51,6 +52,7 @@ object Main {
             ctx.redirect("/app/main.js")
         }
         app.get("/app/main*js") { ctx ->
+
             ctx.contentType("text/javascript");
             ctx.result(patcher.getPatchedFile())
         }

@@ -37,7 +37,11 @@ class Nil {
         variables.push("delta.allowEscapingTimed=false")
 
         val patches : Patches = Patches(unmodifiedFile);
+
+        // Allow accessing the delta.doNotRandomize variable
         patches.push("doNotRandomize=!1", "doNotRandomize=window.delta.doNotRandomize")
+
+        // Log whenever we start a timer
         patches.push("function y(t){return function(e){if(\"__ngUnwrap__\"===e)return t;!1===t(e)&&(e.preventDefault(),e.returnValue=!1)}}", """
             function y(t) {
                 return function(e) {
@@ -49,18 +53,51 @@ class Nil {
                 }
             }
         """.trimIndent())
+
+        // This hack allows you to exit running timed problems without stopping them
         patches.push("{if(\$(\".timed-start-button\").length&&\"Stop\"==\$(\".timed-start-button\").text())return alertDialog(\"You must stop the timer before pressing back. \");this.router.url.startsWith(\"/explore\")?this.router.navigate([\"/explore\"]):this.router.url.startsWith(\"/student\")?this.router.navigate([\"/student\"]):this.location.back()}", """
             {
 				/* Only happens while timer is running */
 				/** Allow exiting timed problems without clicking "Stop" */
 				const escape = window.delta.allowEscapingTimed;
 				/** If the button says "Stop" */
-				const stop = ${'$'}(".timed-start-button").length && "Stop" == ${'$'}(".timed-start-button").text();
+				const stop = $(".timed-start-button").length && "Stop" == $(".timed-start-button").text();
 				/* If escape is false and stop is true, then do this: */
 				if (!escape && stop) return alertDialog("You must stop the timer before pressing back. ");
 				/* Otherwise do this: */
 				this.router.url.startsWith("/explore") ? this.router.navigate(["/explore"]) : this.router.url.startsWith("/student") ? this.router.navigate(["/student"]) : this.location.back()
 			}
+        """.trimIndent())
+
+        // Before submitting a timed problem to submitTimedRecord,
+        // back up doNotRandomize to tempDnr then set doNotRandomize to false
+        patches.push("ProblemDataService.prototype.submitTimedRecord=function(t,e){", """
+            ProblemDataService.prototype.submitTimedRecord = function(t, e) {
+                if (window.delta.doNotRandomize == true) {
+                    window.delta.doNotRandomize=false;
+                    window.delta.tempDnr=true;
+                } else {
+                    window.delta.tempDnr=false;
+                }
+        """.trimIndent())
+
+        // After submitting a timed problem to submitTimedRecord,
+        // Restore the backup of doNotRandomize then set it to true
+        patches.push("this.authHttp.post(i.requestPath,i.request).subscribe((function(t){var i=t;i.message?(alertDialog(i.message),i.hide_assignment&&(_.find(n.studentDataService.studentAssignments,(function(t){return t.id==i.hide_assignment})).hide_assignment=!0,n.router.navigate([\"/student\"]))):(n.studentDataService.updateAssignment(i.assignment),e(i.assignment))}))", """
+            this.authHttp.post(i.requestPath, i.request).subscribe((function(t) {
+            var i = t;
+            i.message ? (alertDialog(i.message), i.hide_assignment && (_.find(n.studentDataService.studentAssignments, (function(t) {
+                return t.id == i.hide_assignment
+            })).hide_assignment = !0, n.router.navigate(["/student"]))) : (n.studentDataService.updateAssignment(i.assignment), e(i.assignment))
+                
+                if (window.delta.tempDnr == true) {
+                    window.delta.doNotRandomize=true;
+                } else if (window.delta.tempDnr == false) {
+                    window.delta.doNotRandomize=false;
+                }
+                
+                window.delta.tempDnr=undefined;
+            }))
         """.trimIndent())
 
         val output : String = """/* main.js - ${Date(System.currentTimeMillis()).toString()} */
@@ -102,7 +139,7 @@ class Nil {
             println("[getMainJsUrl] Main.js url is cached.")
         }
         println("[getMainJsUrl] Successfully obtained main.js url")
-        return latestMainJsUrl as String;
+        return latestMainJsUrl!!;
     }
 
     /**
@@ -118,7 +155,7 @@ class Nil {
             println("[getFile] Main.js contents is cached.")
         }
         println("[getFile] Successfully obtained main.js contents.")
-        return latestVanillaFile as String;
+        return latestVanillaFile!!;
     }
 
     /**
@@ -134,7 +171,7 @@ class Nil {
             println("[getPatchedFile] Patched main.js is cached.")
         }
         println("[getPatchedFile] Successfully obtained patched main.js")
-        return latestPatchedFile as String;
+        return latestPatchedFile!!;
     }
 
 
