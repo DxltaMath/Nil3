@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Nil3.jar" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/out/artifacts/Nil3_main_jar/Nil3.main.jar" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="openjdk-17" />
+    <method v="2">
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="Nil3.main:jar" />
+      </option>
+    </method>
+  </configuration>
+</component>
