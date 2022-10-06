@@ -4,8 +4,10 @@
 # Compiled classes
 build/
 
+
 # Gradle resources
 .gradle/
+gradle/
 
 # Dependencies
 lib/
