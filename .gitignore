@@ -1,5 +1,15 @@
-.gradle/
+# Compiled JAR
+/out/
+
+# Compiled classes
 build/
+
+# Gradle resources
+.gradle/
+
+# Dependencies
 lib/
 libs/
-**/**/.DS_Store
+
+# MacOS DS_Store
+.DS_Store
