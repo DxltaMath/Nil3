@@ -10,7 +10,7 @@ object Constants {
 
     /** Override, if not it'll default to 80.
      * CAUTION: Remember that server port 80 is the default http port, and port 443 is the default HTTPS port. */
-    const val HTTP_PORT : Int = 80
+    const val HTTP_PORT : Int = 3000
 
 
     /** Override your own dGUI bundle URL here, if not, Nil will use the official dGUI URL. (controlled by DxltaMath admins)

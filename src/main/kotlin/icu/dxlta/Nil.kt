@@ -35,11 +35,12 @@ class Nil {
         val variables : Variables = Variables();
         variables.push("delta.doNotRandomize=false")
         variables.push("delta.allowEscapingTimed=false")
+        variables.push("delta.tempDnr=false")
 
         val patches : Patches = Patches(unmodifiedFile);
 
         // Allow accessing the delta.doNotRandomize variable
-        patches.push("doNotRandomize=!1", "doNotRandomize=window.delta.doNotRandomize")
+        patches.push("doNotRandomize=!1", "doNotRandomize=window._.delta.doNotRandomize")
 
         // Log whenever we start a timer
         patches.push("function y(t){return function(e){if(\"__ngUnwrap__\"===e)return t;!1===t(e)&&(e.preventDefault(),e.returnValue=!1)}}", """
@@ -59,7 +60,7 @@ class Nil {
             {
 				/* Only happens while timer is running */
 				/** Allow exiting timed problems without clicking "Stop" */
-				const escape = window.delta.allowEscapingTimed;
+				const escape = window._.delta.allowEscapingTimed;
 				/** If the button says "Stop" */
 				const stop = $(".timed-start-button").length && "Stop" == $(".timed-start-button").text();
 				/* If escape is false and stop is true, then do this: */
@@ -73,11 +74,11 @@ class Nil {
         // back up doNotRandomize to tempDnr then set doNotRandomize to false
         patches.push("ProblemDataService.prototype.submitTimedRecord=function(t,e){", """
             ProblemDataService.prototype.submitTimedRecord = function(t, e) {
-                if (window.delta.doNotRandomize == true) {
-                    window.delta.doNotRandomize=false;
-                    window.delta.tempDnr=true;
+                if (window._.delta.doNotRandomize == true) {
+                    window._.delta.doNotRandomize=false;
+                    window._.delta.tempDnr=true;
                 } else {
-                    window.delta.tempDnr=false;
+                    window._.delta.tempDnr=false;
                 }
         """.trimIndent())
 
@@ -90,19 +91,27 @@ class Nil {
                 return t.id == i.hide_assignment
             })).hide_assignment = !0, n.router.navigate(["/student"]))) : (n.studentDataService.updateAssignment(i.assignment), e(i.assignment))
                 
-                if (window.delta.tempDnr == true) {
-                    window.delta.doNotRandomize=true;
-                } else if (window.delta.tempDnr == false) {
-                    window.delta.doNotRandomize=false;
+                if (window._.delta.tempDnr == true) {
+                    window._.delta.doNotRandomize=true;
+                } else if (window._.delta.tempDnr == false) {
+                    window._.delta.doNotRandomize=false;
                 }
                 
-                window.delta.tempDnr=undefined;
+                window._.delta.tempDnr=undefined;
             }))
         """.trimIndent())
 
         val output : String = """/* main.js - ${Date(System.currentTimeMillis()).toString()} */
             
             ${variables.get() /* Accessors */}
+            
+            window.oldLodash = window._;
+			let lodashChecker = setInterval(() => {
+				if (window.oldLodash !== window._) {
+					window._ = window.oldLodash;
+					clearInterval(lodashChecker);
+				}
+			});
             
             ${patches.get() /* Patched main.js */}
             
