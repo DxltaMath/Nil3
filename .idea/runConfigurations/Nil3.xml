@@ -7,6 +7,7 @@
     <shortenClasspath name="NONE" />
     <method v="2">
       <option name="Make" enabled="true" />
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="" />
     </method>
   </configuration>
 </component>
