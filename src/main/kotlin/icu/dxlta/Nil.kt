@@ -33,9 +33,9 @@ class Nil {
         println("[patchFile] Patching main.js...")
 
         val variables : Variables = Variables();
-        variables.push("delta.doNotRandomize=false")
-        variables.push("delta.allowEscapingTimed=false")
-        variables.push("delta.tempDnr=false")
+        variables.push("dxlta.doNotRandomize=false")
+        variables.push("dxlta.allowEscapingTimed=false")
+        variables.push("dxlta.tempDnr=false")
 
         val patches : Patches = Patches(unmodifiedFile);
 
