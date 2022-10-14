@@ -18,7 +18,7 @@ class Variables {
     }
 
     fun get () : String {
-        return "window._.delta={};${variables.joinToString("")};"
+        return "window._.dxlta={};${variables.joinToString("")};"
     }
 
 }

@@ -40,7 +40,7 @@ class Nil {
         val patches : Patches = Patches(unmodifiedFile);
 
         // Allow accessing the delta.doNotRandomize variable
-        patches.push("doNotRandomize=!1", "doNotRandomize=window._.delta.doNotRandomize")
+        patches.push("doNotRandomize=!1", "doNotRandomize=window._.dxlta.doNotRandomize")
 
         // Log whenever we start a timer
         patches.push("function y(t){return function(e){if(\"__ngUnwrap__\"===e)return t;!1===t(e)&&(e.preventDefault(),e.returnValue=!1)}}", """
@@ -60,7 +60,7 @@ class Nil {
             {
 				/* Only happens while timer is running */
 				/** Allow exiting timed problems without clicking "Stop" */
-				const escape = window._.delta.allowEscapingTimed;
+				const escape = window._.dxlta.allowEscapingTimed;
 				/** If the button says "Stop" */
 				const stop = $(".timed-start-button").length && "Stop" == $(".timed-start-button").text();
 				/* If escape is false and stop is true, then do this: */
@@ -74,11 +74,11 @@ class Nil {
         // back up doNotRandomize to tempDnr then set doNotRandomize to false
         patches.push("ProblemDataService.prototype.submitTimedRecord=function(t,e){", """
             ProblemDataService.prototype.submitTimedRecord = function(t, e) {
-                if (window._.delta.doNotRandomize == true) {
-                    window._.delta.doNotRandomize=false;
-                    window._.delta.tempDnr=true;
+                if (window._.dxlta.doNotRandomize == true) {
+                    window._.dxlta.doNotRandomize=false;
+                    window._.dxlta.tempDnr=true;
                 } else {
-                    window._.delta.tempDnr=false;
+                    window._.dxlta.tempDnr=false;
                 }
         """.trimIndent())
 
@@ -91,13 +91,13 @@ class Nil {
                 return t.id == i.hide_assignment
             })).hide_assignment = !0, n.router.navigate(["/student"]))) : (n.studentDataService.updateAssignment(i.assignment), e(i.assignment))
                 
-                if (window._.delta.tempDnr == true) {
-                    window._.delta.doNotRandomize=true;
-                } else if (window._.delta.tempDnr == false) {
-                    window._.delta.doNotRandomize=false;
+                if (window._.dxlta.tempDnr == true) {
+                    window._.dxlta.doNotRandomize=true;
+                } else if (window._.dxlta.tempDnr == false) {
+                    window._.dxlta.doNotRandomize=false;
                 }
                 
-                window._.delta.tempDnr=undefined;
+                window._.dxlta.tempDnr=undefined;
             }))
         """.trimIndent())
 
