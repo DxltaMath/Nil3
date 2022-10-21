@@ -4,7 +4,7 @@ import icu.dxlta.constants.Constants
 import icu.dxlta.constants.SSL
 import icu.dxlta.constants.Website
 import io.javalin.Javalin
-import io.javalin.ssl.plugin.SSLPlugin
+import io.javalin.community.ssl.SSLPlugin
 
 
 val patcher : Nil = Nil()
